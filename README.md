@@ -1,4 +1,4 @@
-# Stakehood - Roblox Trading & Casino Platform
+# Stakehood - Da Hood Casino Platform
 
 ## Project Overview
 
@@ -232,4 +232,5 @@ Contributions are welcome! Please:
 ## Disclaimer
 
 This project is for educational purposes. Ensure compliance with Roblox Terms of Service and Discord Terms of Service when using this software.
+
 
