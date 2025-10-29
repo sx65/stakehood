@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stakehood - Inventory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3eef4a;
+      --primary-dark: #24cc31;
+      --primary-light: #73ff7e;
+      --secondary: #16181c;
+      --accent: #3eef4a;
+      --success: #3eef4a;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg-dark: #0d0e11;
+      --bg-card: #16181c;
+      --bg-card-hover: #1e2127;
+      --bg-light: #1e2127;
+      --text: #ffffff;
+      --text-muted: #9ca3af;
+      --border: #24262d;
+      --header-height: 60px;
+      --sidebar-width: 80px;
+      --sidebar-expanded-width: 220px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .header {
+      height: 60px;
+      background-color: var(--secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px 0 100px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 90;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo img {
+      height: 32px;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 12px;
+      background-color: var(--bg-light);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+    }
+    .user-info:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--primary);
+    }
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--bg-dark);
+    }
+    .main-container {
+      display: flex;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--secondary);
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+      z-index: 90;
+      transition: width 0.3s ease;
+    }
+    .sidebar:hover {
+      width: var(--sidebar-expanded-width);
+    }
+    .sidebar:hover .menu-text {
+      display: block;
+    }
+    .sidebar:hover .menu-icon {
+      margin-right: 12px;
+    }
+    .sidebar-title {
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 24px 0 8px 17px;
+      letter-spacing: 1px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .sidebar:hover .sidebar-title {
+      opacity: 1;
+    }
+    .content {
+      margin-left: var(--sidebar-width);
+      margin-top: 60px;
+      padding: 24px;
+      width: calc(100% - var(--sidebar-width));
+    }
+    .sidebar-menu {
+      list-style: none;
+      margin-bottom: 24px;
+      padding-top: 60px;
+    }
+    .menu-item {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      text-decoration: none;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .menu-item:hover {
+      background-color: var(--bg-light);
+    }
+    .menu-item.active {
+      background-color: rgba(62, 239, 74, 0.1);
+    }
+    .menu-item.active .menu-icon {
+      color: var(--primary);
+    }
+    .menu-icon {
+      font-size: 18px;
+      color: var(--text-muted);
+      min-width: 24px;
+      text-align: center;
+      transition: color 0.2s ease;
+    }
+    .menu-item:hover .menu-icon {
+      color: var(--primary);
+    }
+    .menu-text {
+      display: none;
+      transition: opacity 0.2s;
+      margin-left: 12px;
+      font-weight: 500;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      outline: none;
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--bg-dark);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background-color: var(--bg-light);
+      color: white;
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+    .btn-success {
+      background-color: var(--success);
+      color: var(--bg-dark);
+    }
+    .btn-success:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #dc2626;
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background-color: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .btn-lg {
+      padding: 12px 20px;
+      font-size: 16px;
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    .btn-icon {
+      padding: 8px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      margin-bottom: 24px;
+    }
+    .card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(62, 239, 74, 0.1);
+    }
+    .card-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      padding: 20px;
+      background-color: var(--bg-card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+    .stat-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(62, 239, 74, 0.1);
+    }
+    .stat-title {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      background-color: var(--bg-card);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .filter-control {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background-color: var(--bg-light);
+      color: var(--text);
+      font-size: 14px;
+      min-width: 120px;
+    }
+    .search-control {
+      flex: 1;
+      min-width: 200px;
+    }
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .skin-card {
+      background-color: var(--bg-card);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .skin-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(62, 239, 74, 0.1);
+    }
+    .skin-image-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 100%;
+      background-color: var(--bg-light);
+    }
+    .skin-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 16px;
+    }
+    .skin-count {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(13, 14, 17, 0.8);
+      color: var(--text);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .skin-info {
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .skin-name {
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.3;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .skin-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .skin-value {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .skin-actions {
+      margin-top: auto;
+      display: flex;
+      gap: 8px;
+    }
+    .skin-tag {
+      display: inline-block;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: white;
+    }
+    .rarity-common {
+      background-color: #6b7280;
+    }
+    .rarity-uncommon {
+      background-color: #10b981;
+    }
+    .rarity-rare {
+      background-color: #3b82f6;
+    }
+    .rarity-epic {
+      background-color: #8b5cf6;
+    }
+    .rarity-legendary {
+      background-color: #f59e0b;
+    }
+    .rarity-mythic {
+      background-color: #ef4444;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(13, 14, 17, 0.9);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-container {
+      background-color: var(--bg-card);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.2s ease;
+      border: 1px solid var(--border);
+    }
+    .modal-overlay.active .modal-container {
+      transform: translateY(0);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 20px;
+    }
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .skin-modal-image {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      margin-bottom: 20px;
+      background-color: var(--bg-light);
+      border-radius: 8px;
+    }
+    .skin-detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .skin-detail-label {
+      color: var(--text-muted);
+    }
+    .skin-detail-value {
+      font-weight: 500;
+    }
+    .withdraw-command {
+      background-color: var(--bg-light);
+      padding: 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .copy-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+    .copy-btn:hover {
+      color: var(--text);
+    }
+    .login-card {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .empty-icon {
+      font-size: 48px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .spinner-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 0;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 1100px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+      .content {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 600px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+      .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .inventory-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+    .d-none {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">
+      <img src="https://via.placeholder.com/40" alt="">
+      Stakehood
+    </a>
+    <div class="header-actions">
+      <button class="btn btn-primary" id="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+      <div class="user-info" id="user-info" style="display: none;">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <div>
+          <div id="username-display">Username</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul class="sidebar-menu">
+        <li>
+          <a href="index.html" class="menu-item">
+            <i class="fas fa-home menu-icon"></i>
+            <span class="menu-text">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="coinflip.html" class="menu-item">
+            <i class="fas fa-coins menu-icon"></i>
+            <span class="menu-text">Coinflip</span>
+          </a>
+        </li>
+        <li>
+          <a href="inventory.html" class="menu-item active">
+            <i class="fas fa-box-open menu-icon"></i>
+            <span class="menu-text">Inventory</span>
+          </a>
+        </li>
+        <li>
+          <a href="profile.html" class="menu-item">
+            <i class="fas fa-user menu-icon"></i>
+            <span class="menu-text">Profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="history.html" class="menu-item">
+            <i class="fas fa-history menu-icon"></i>
+            <span class="menu-text">History</span>
+          </a>
+        </li>
+        <li>
+          <a href="settings.html" class="menu-item">
+            <i class="fas fa-cog menu-icon"></i>
+            <span class="menu-text">Settings</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="menu-item" id="logout-btn">
+            <i class="fas fa-sign-out-alt menu-icon"></i>
+            <span class="menu-text">Logout</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Login Card for guests -->
+      <div id="login-required-card" class="card" style="display: none;">
+        <div class="card-body login-card">
+          <h2 style="font-size: 24px; margin-bottom: 16px;">View Your Inventory</h2>
+          <p style="color: var(--text-muted); margin-bottom: 24px;">Login with Discord to see your skin collection and manage your items.</p>
+          <button class="btn btn-primary btn-lg" id="login-btn-card">
+            <i class="fab fa-discord" style="font-size: 18px;"></i> Login with Discord
+          </button>
+        </div>
+      </div>
+      <div id="inventory-content" style="display: none;">
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-title">
+              <i class="fas fa-cubes me-2"></i> Total Items
+            </div>
+            <div class="stat-value" id="total-items">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">
+              <i class="fas fa-th-large me-2"></i> Unique Skins
+            </div>
+            <div class="stat-value" id="unique-skins">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">
+              <i class="fas fa-money-bill-wave me-2"></i> Total Value
+            </div>
+            <div class="stat-value" id="total-value">0</div>
+          </div>
+        </div>
+        <!-- Filters -->
+        <div class="filters-row">
+          <div class="filter-group search-control">
+            <input type="text" id="search-skin" class="filter-control search-control" placeholder="Search skins...">
+          </div>
+          <div class="filter-group">
+            <select id="filter-rarity" class="filter-control">
+              <option value="all">All Rarities</option>
+              <option value="common">Common</option>
+              <option value="uncommon">Uncommon</option>
+              <option value="rare">Rare</option>
+              <option value="epic">Epic</option>
+              <option value="legendary">Legendary</option>
+              <option value="mythic">Mythic</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <select id="sort-by" class="filter-control">
+              <option value="value-desc">Value (High to Low)</option>
+              <option value="value-asc">Value (Low to High)</option>
+              <option value="name-asc">Name (A to Z)</option>
+              <option value="name-desc">Name (Z to A)</option>
+              <option value="count-desc">Count (Most first)</option>
+            </select>
+          </div>
+          <button class="btn btn-secondary" id="refresh-inventory-btn">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
+        <!-- Loading Spinner -->
+        <div id="inventory-loading" class="spinner-container">
+          <div class="spinner"></div>
+        </div>
+        <!-- Empty Inventory -->
+        <div id="empty-inventory" class="card d-none">
+          <div class="card-body empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-box-open"></i>
+            </div>
+            <h3 style="margin-bottom: 16px;">Your inventory is empty</h3>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Deposit some skins through the Discord bot to get started!</p>
+            <button class="btn btn-primary" id="how-to-deposit-btn">
+              <i class="fas fa-question-circle"></i> How to Deposit
+            </button>
+          </div>
+        </div>
+        <!-- Inventory Grid -->
+        <div class="inventory-grid" id="inventory-grid"></div>
+      </div>
+    </main>
+  </div>
+  <!-- Skin Details Modal -->
+  <div class="modal-overlay" id="skinDetailsModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Skin Details</h3>
+        <button class="modal-close" id="closeSkinModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img src="https://via.placeholder.com/200" alt="Skin" class="skin-modal-image" id="modal-skin-image">
+        <h4 id="modal-skin-name" style="margin-bottom: 20px; text-align: center;">Skin Name</h4>
+        
+        <div class="skin-detail-row">
+          <span class="skin-detail-label">Rarity:</span>
+          <span class="skin-detail-value">
+            <span class="skin-tag" id="modal-skin-rarity">Common</span>
+          </span>
+        </div>
+        <div class="skin-detail-row">
+          <span class="skin-detail-label">Value:</span>
+          <span class="skin-detail-value" id="modal-skin-value">0 points</span>
+        </div>
+        <div class="skin-detail-row">
+          <span class="skin-detail-label">Quantity:</span>
+          <span class="skin-detail-value" id="modal-skin-count">1x</span>
+        </div>
+        <div class="skin-detail-row">
+          <span class="skin-detail-label">Total Value:</span>
+          <span class="skin-detail-value" id="modal-skin-total-value">0 points</span>
+        </div>
+        
+        <div style="margin-top: 20px;">
+          <h4 style="margin-bottom: 10px; font-size: 16px;">Withdraw Command</h4>
+          <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">Use this command in Discord to withdraw this skin:</p>
+          <div class="withdraw-command">
+            <span>/withdraw skins:<span id="modal-withdraw-command">Skin Name</span></span>
+            <button class="copy-btn" id="copy-command-btn" title="Copy to clipboard">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeSkinDetailsBtn">Close</button>
+      </div>
+    </div>
+  </div>
+  <!-- Deposit Instructions Modal -->
+  <div class="modal-overlay" id="depositInstructionsModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">How to Deposit Skins</h3>
+        <button class="modal-close" id="closeDepositModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px;">Step 1: Join our Discord</h4>
+          <p>Join our Discord server to get access to the trading bot.</p>
+          <a href="https://discord.gg/pn5fNufeJz" target="_blank" class="btn btn-outline mt-2" style="width: 100%;">
+            <i class="fab fa-discord"></i> Join Discord
+          </a>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px;">Step 2: Use the Deposit Command</h4>
+          <p>In Discord, use the <code>/deposit</code> command in the bot channel to start the deposit process.</p>
+          <div style="background-color: var(--bg-light); padding: 10px; border-radius: 6px; font-family: monospace; margin-top: 10px;">
+            /deposit
+          </div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px;">Step 3: Join the Private Server</h4>
+          <p>The bot will give you a link to join our private Roblox server.</p>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 10px;">Step 4: Complete the Trade</h4>
+          <p>Accept the trade request from the bot in game and place your skins in the trade window.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeDepositBtn">Close</button>
+      </div>
+    </div>
+  </div>
+  <script src="js/auth-client.js"></script>
+  <script>
+    class BootstrapModal {
+      constructor(element) {
+        this.element = element;
+      }
+      show() {
+        this.element.classList.add('active');
+      }
+      hide() {
+        this.element.classList.remove('active');
+      }
+    }
+    const API_BASE_URL = 'http://localhost:3000';
+    let user = null;
+    let inventoryData = null;
+    let allSkins = [];
+    let filteredSkins = [];
+    const loginBtn = document.getElementById('login-btn');
+    const loginBtnCard = document.getElementById('login-btn-card');
+    const logoutBtn = document.getElementById('logout-btn');
+    const usernameDisplay = document.getElementById('username-display');
+    const userAvatar = document.getElementById('user-avatar');
+    const userInfo = document.getElementById('user-info');
+    const loginRequiredCard = document.getElementById('login-required-card');
+    const inventoryContent = document.getElementById('inventory-content');
+    
+    const totalItemsEl = document.getElementById('total-items');
+    const uniqueSkinsEl = document.getElementById('unique-skins');
+    const totalValueEl = document.getElementById('total-value');
+    const sidebarTotalItems = document.getElementById('sidebar-total-items');
+    const sidebarUniqueItems = document.getElementById('sidebar-unique-skins');
+    const sidebarTotalValue = document.getElementById('sidebar-total-value');
+    const userInventoryValue = document.getElementById('user-inventory-value');
+    
+    const sortBySelect = document.getElementById('sort-by');
+    const filterRaritySelect = document.getElementById('filter-rarity');
+    const searchSkinInput = document.getElementById('search-skin');
+    const refreshInventoryBtn = document.getElementById('refresh-inventory-btn');
+    const howToDepositBtn = document.getElementById('how-to-deposit-btn');
+    
+    const inventoryLoading = document.getElementById('inventory-loading');
+    const emptyInventory = document.getElementById('empty-inventory');
+    const inventoryGrid = document.getElementById('inventory-grid');
+    
+    const skinDetailsModal = document.getElementById('skinDetailsModal');
+    const depositInstructionsModal = document.getElementById('depositInstructionsModal');
+    const modalSkinImage = document.getElementById('modal-skin-image');
+    const modalSkinName = document.getElementById('modal-skin-name');
+    const modalSkinRarity = document.getElementById('modal-skin-rarity');
+    const modalSkinValue = document.getElementById('modal-skin-value');
+    const modalSkinCount = document.getElementById('modal-skin-count');
+    const modalSkinTotalValue = document.getElementById('modal-skin-total-value');
+    const modalWithdrawCommand = document.getElementById('modal-withdraw-command');
+    const copyCommandBtn = document.getElementById('copy-command-btn');
+    const skinDetailsModalInstance = new BootstrapModal(skinDetailsModal);
+    const depositInstructionsModalInstance = new BootstrapModal(depositInstructionsModal);
+    function formatValue(value) {
+      return typeof value === 'number' ? value.toLocaleString() : '0';
+    }
+    function getRarityColor(rarity) {
+      return `rarity-${rarity?.toLowerCase() || 'common'}`;
+    }
+    async function loadInventory() {
+      if (!user) return;
+      
+      try {
+        inventoryLoading.classList.remove('d-none');
+        emptyInventory.classList.add('d-none');
+        inventoryGrid.innerHTML = '';
+        
+        const token = AuthClient.getToken();
+        const response = await fetch(`${API_BASE_URL}/inventory/stats/${user.discordId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          if (response.status === 401) {
+            AuthClient.logout();
+            return;
+          }
+          throw new Error('Failed to fetch inventory');
+        }
+        
+        inventoryData = await response.json();
+        
+        totalItemsEl.textContent = formatValue(inventoryData.totalItems || 0);
+        uniqueSkinsEl.textContent = formatValue(inventoryData.uniqueSkins || 0);
+        totalValueEl.textContent = formatValue(inventoryData.totalValue || 0);
+        
+        if (sidebarTotalItems) sidebarTotalItems.textContent = formatValue(inventoryData.totalItems || 0);
+        if (sidebarUniqueItems) sidebarUniqueItems.textContent = formatValue(inventoryData.uniqueSkins || 0);
+        if (sidebarTotalValue) sidebarTotalValue.textContent = formatValue(inventoryData.totalValue || 0);
+        if (userInventoryValue) userInventoryValue.textContent = formatValue(inventoryData.totalValue || 0);
+        
+        if (!inventoryData.skins || inventoryData.skins.length === 0) {
+          inventoryLoading.classList.add('d-none');
+          emptyInventory.classList.remove('d-none');
+          return;
+        }
+        
+        allSkins = inventoryData.skins;
+        applyFilters();
+        
+        inventoryLoading.classList.add('d-none');
+      } catch (error) {
+        console.error('Error loading inventory:', error);
+        inventoryLoading.classList.add('d-none');
+        
+        inventoryGrid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px;">
+            <div style="color: var(--danger); font-size: 48px; margin-bottom: 16px;">
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 style="margin-bottom: 16px;">Error loading inventory</h3>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Please try again later.</p>
+            <button class="btn btn-primary" id="retry-load-btn">
+              <i class="fas fa-sync-alt"></i> Retry
+            </button>
+          </div>
+        `;
+        
+        document.getElementById('retry-load-btn').addEventListener('click', loadInventory);
+      }
+    }
+    function applyFilters() {
+      const searchTerm = searchSkinInput.value.toLowerCase().trim();
+      const rarityFilter = filterRaritySelect.value;
+      const sortBy = sortBySelect.value;
+      
+      filteredSkins = allSkins.filter(skin => {
+        if (searchTerm && !skin.skin_name.toLowerCase().includes(searchTerm)) {
+          return false;
+        }
+        
+        if (rarityFilter !== 'all' && skin.rarity.toLowerCase() !== rarityFilter) {
+          return false;
+        }
+        
+        return true;
+      });
+      
+      filteredSkins.sort((a, b) => {
+        switch (sortBy) {
+          case 'value-desc':
+            return b.value - a.value;
+          case 'value-asc':
+            return a.value - b.value;
+          case 'name-asc':
+            return a.skin_name.localeCompare(b.skin_name);
+          case 'name-desc':
+            return b.skin_name.localeCompare(a.skin_name);
+          case 'count-desc':
+            return b.count - a.count;
+          default:
+            return 0;
+        }
+      });
+      
+      renderInventory();
+    }
+    function renderInventory() {
+      inventoryGrid.innerHTML = '';
+      
+      if (filteredSkins.length === 0) {
+        inventoryGrid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px;">
+            <div style="color: var(--text-muted); font-size: 48px; margin-bottom: 16px;">
+              <i class="fas fa-filter"></i>
+            </div>
+            <h3 style="margin-bottom: 16px;">No skins match your filters</h3>
+            <button class="btn btn-outline" id="clear-filters-btn">
+              <i class="fas fa-times"></i> Clear Filters
+            </button>
+          </div>
+        `;
+        
+        document.getElementById('clear-filters-btn').addEventListener('click', clearFilters);
+        return;
+      }
+      
+      filteredSkins.forEach(skin => {
+        const rarityClass = getRarityColor(skin.rarity);
+        const card = document.createElement('div');
+        
+        card.innerHTML = `
+          <div class="skin-card">
+            <div class="skin-image-container">
+              <img src="${skin.image_url || 'https://via.placeholder.com/200?text=No+Image'}" 
+                  alt="${skin.skin_name}" 
+                  class="skin-image"
+                  onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=No+Image';">
+              <div class="skin-count">${skin.count}x</div>
+            </div>
+            <div class="skin-info">
+              <div class="skin-name">${skin.skin_name}</div>
+              <div class="skin-details">
+                <span class="skin-tag ${rarityClass}">${skin.rarity}</span>
+                <span class="skin-value">${formatValue(skin.value)} points</span>
+              </div>
+              <div class="skin-actions">
+                <button class="btn btn-sm btn-secondary view-skin-btn" data-skin-name="${skin.skin_name}">
+                  <i class="fas fa-info-circle"></i> Details
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        inventoryGrid.appendChild(card);
+      });
+      
+      document.querySelectorAll('.view-skin-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const skinName = button.getAttribute('data-skin-name');
+          showSkinDetails(skinName);
+        });
+      });
+    }
+    function clearFilters() {
+      searchSkinInput.value = '';
+      filterRaritySelect.value = 'all';
+      sortBySelect.value = 'value-desc';
+      applyFilters();
+    }
+    function showSkinDetails(skinName) {
+      const skin = allSkins.find(s => s.skin_name === skinName);
+      
+      if (!skin) return;
+      
+      modalSkinName.textContent = skin.skin_name;
+      modalSkinImage.src = skin.image_url || 'https://via.placeholder.com/200?text=No+Image';
+      modalSkinImage.onerror = function() {
+        this.onerror = null;
+        this.src = 'https://via.placeholder.com/200?text=No+Image';
+      };
+      
+      modalSkinRarity.textContent = skin.rarity;
+      modalSkinRarity.className = `skin-tag ${getRarityColor(skin.rarity)}`;
+      modalSkinValue.textContent = `${formatValue(skin.value)} points`;
+      modalSkinCount.textContent = `${skin.count}x`;
+      modalSkinTotalValue.textContent = `${formatValue(skin.value * skin.count)} points`;
+      modalWithdrawCommand.textContent = skin.skin_name;
+      
+      skinDetailsModalInstance.show();
+    }
+    async function updateAuthUI() {
+      try {
+        user = await AuthClient.getCurrentUser();
+        
+        if (user) {
+          userInfo.style.display = 'flex';
+          loginBtn.style.display = 'none';
+          usernameDisplay.textContent = user.robloxUsername;
+          userAvatar.textContent = user.robloxUsername.charAt(0).toUpperCase();
+          
+          loginRequiredCard.style.display = 'none';
+          inventoryContent.style.display = 'block';
+          
+          loadInventory();
+        } else {
+          userInfo.style.display = 'none';
+          loginBtn.style.display = 'flex';
+          
+          loginRequiredCard.style.display = 'block';
+          inventoryContent.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error updating auth UI:', error);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.modal-close, #closeDepositBtn, #closeSkinDetailsBtn').forEach(el => {
+        el.addEventListener('click', function() {
+          const modal = this.closest('.modal-overlay');
+          modal.classList.remove('active');
+        });
+      });
+      
+      loginBtn.addEventListener('click', () => AuthClient.login());
+      loginBtnCard.addEventListener('click', () => AuthClient.login());
+      logoutBtn.addEventListener('click', () => AuthClient.logout());
+      
+      sortBySelect.addEventListener('change', applyFilters);
+      filterRaritySelect.addEventListener('change', applyFilters);
+      searchSkinInput.addEventListener('input', applyFilters);
+      refreshInventoryBtn.addEventListener('click', loadInventory);
+      
+      howToDepositBtn.addEventListener('click', () => depositInstructionsModalInstance.show());
+      
+      copyCommandBtn.addEventListener('click', () => {
+        const command = `/withdraw skins:${modalWithdrawCommand.textContent}`;
+        navigator.clipboard.writeText(command)
+          .then(() => {
+            copyCommandBtn.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+              copyCommandBtn.innerHTML = '<i class="far fa-copy"></i>';
+            }, 1500);
+          })
+          .catch(err => {
+            console.error('Failed to copy: ', err);
+          });
+      });
+      
+      updateAuthUI();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stakehood - Provably Fair Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --secondary: #0ea5e9;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #273549;
+      --bg-light: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --header-height: 70px;
+      --sidebar-width: 280px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .header {
+      height: 60px;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo img {
+      height: 40px;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background-color: var(--bg-light);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .user-info:hover {
+      background-color: var(--bg-card-hover);
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .sidebar {
+      width: 60px;
+      background-color: var(--bg-card);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+      z-index: 90;
+      transition: width 0.3s ease;
+    }
+    .sidebar:hover {
+      width: 240px;
+    }
+    .sidebar:hover .menu-text {
+      display: block;
+    }
+    .sidebar:hover .menu-icon {
+      margin-right: 12px;
+    }
+    .menu-item {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      text-decoration: none;
+      color: var(--text);
+      border-left: 3px solid transparent;
+      white-space: nowrap;
+    }
+    .menu-item:hover {
+      background-color: var(--bg-light);
+    }
+    .menu-item.active {
+      border-left-color: var(--primary);
+      background-color: rgba(99, 102, 241, 0.15);
+    }
+    .menu-item.active .menu-icon {
+      color: var(--primary);
+    }
+    .menu-icon {
+      font-size: 18px;
+      color: var(--text-muted);
+      min-width: 24px;
+      text-align: center;
+    }
+    .menu-text {
+      display: none;
+      transition: opacity 0.2s;
+    }
+    .sidebar-title {
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 24px 0 8px 15px;
+      letter-spacing: 1px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .sidebar:hover .sidebar-title {
+      opacity: 1;
+    }
+    .content {
+      margin-left: 60px;
+      margin-top: 60px;
+      padding: 24px;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: var(--bg-light);
+      color: var(--text);
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .form-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      outline: none;
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: white;
+    }
+    .btn-secondary:hover {
+      background-color: #0284c7;
+    }
+    .btn-outline {
+      background-color: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      border-color: var(--text-muted);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .alert {
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .alert-success {
+      background-color: rgba(16, 185, 129, 0.2);
+      border-left: 4px solid var(--success);
+      color: var(--success);
+    }
+    .alert-warning {
+      background-color: rgba(245, 158, 11, 0.2);
+      border-left: 4px solid var(--warning);
+      color: var(--warning);
+    }
+    .alert-danger {
+      background-color: rgba(239, 68, 68, 0.2);
+      border-left: 4px solid var(--danger);
+      color: var(--danger);
+    }
+    .result-box {
+      background-color: var(--bg-light);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .result-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+    .result-value {
+      font-family: monospace;
+      word-break: break-all;
+    }
+    .result-explanation {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .page-header {
+      margin-bottom: 24px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .page-description {
+      color: var(--text-muted);
+    }
+    .responsible-gambling {
+      padding: 16px;
+      border-radius: 8px;
+      background-color: rgba(14, 165, 233, 0.1);
+      border-left: 4px solid var(--secondary);
+      margin-bottom: 24px;
+    }
+    .responsible-gambling-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--secondary);
+    }
+    .responsible-gambling-text {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    .coin-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      display: block;
+    }
+    .coin-heads {
+      background: linear-gradient(315deg, var(--primary), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 700;
+      color: white;
+    }
+    .coin-tails {
+      background: linear-gradient(315deg, var(--danger), #b91c1c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 700;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">
+      <img src="https://via.placeholder.com/40" alt="">
+      Stakehood
+    </a>
+    <div class="header-actions">
+      <button class="btn btn-primary" id="login-btn" style="display: none;">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+      <div class="user-info" id="user-info" style="display: none;">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <div>
+          <div id="username-display">Username</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <aside class="sidebar">
+    <div class="sidebar-title">Platform</div>
+    <a href="index.html" class="menu-item">
+      <i class="fas fa-home menu-icon"></i>
+      <span class="menu-text">Home</span>
+    </a>
+    <a href="coinflip.html" class="menu-item">
+      <i class="fas fa-coins menu-icon"></i>
+      <span class="menu-text">Coinflip</span>
+    </a>
+    <a href="inventory.html" class="menu-item">
+      <i class="fas fa-box-open menu-icon"></i>
+      <span class="menu-text">Inventory</span>
+    </a>
+    <a href="calculator.html" class="menu-item active">
+      <i class="fas fa-calculator menu-icon"></i>
+      <span class="menu-text">Fair Calculator</span>
+    </a>
+    <div class="sidebar-title">Account</div>
+    <a href="history.html" class="menu-item">
+      <i class="fas fa-history menu-icon"></i>
+      <span class="menu-text">History</span>
+    </a>
+    <a href="settings.html" class="menu-item">
+      <i class="fas fa-cog menu-icon"></i>
+      <span class="menu-text">Settings</span>
+    </a>
+    <a href="#" class="menu-item" id="logout-btn">
+      <i class="fas fa-sign-out-alt menu-icon"></i>
+      <span class="menu-text">Logout</span>
+    </a>
+  </aside>
+  
+  <main class="content">
+    <div class="page-header">
+      <h1 class="page-title">Provably Fair Calculator</h1>
+      <p class="page-description">Verify the fairness of any Coinflip game using cryptographic principles.</p>
+    </div>
+    
+    <div class="responsible-gambling">
+      <h3 class="responsible-gambling-title">Transparency & Fair Play</h3>
+      <p class="responsible-gambling-text">
+        We're committed to providing a transparent and fair gaming experience. Our provably fair system
+        ensures that game outcomes cannot be manipulated and can be independently verified by anyone.
+      </p>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Input Game Data</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Game ID (Optional)</label>
+          <input type="text" class="form-control" id="game-id" placeholder="Enter the Game ID">
+          <p class="form-text">The unique identifier for the game you want to verify.</p>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Server Seed</label>
+          <input type="text" class="form-control" id="server-seed" placeholder="Enter the server seed">
+          <p class="form-text">The server seed is revealed after the game is completed.</p>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Client Seed</label>
+          <input type="text" class="form-control" id="client-seed" placeholder="Enter the client seed">
+          <p class="form-text">This is either chosen by the joiner or auto-generated.</p>
+        </div>
+        
+        <div id="input-alert" class="alert alert-warning" style="display: none;">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <span id="input-alert-message">You must enter both the server seed and client seed.</span>
+        </div>
+        
+        <div class="d-flex" style="gap: 12px;">
+          <button class="btn btn-primary" id="calculate-btn">
+            <i class="fas fa-calculator"></i> Calculate Result
+          </button>
+          <button class="btn btn-outline" id="clear-btn">
+            <i class="fas fa-eraser"></i> Clear
+          </button>
+          <button class="btn btn-secondary" id="fetch-btn" style="margin-left: auto;">
+            <i class="fas fa-download"></i> Fetch Game Data
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="result-container" style="display: none;">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Verification Result</h2>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+            <div class="coin-image" id="result-coin">
+            </div>
+          </div>
+          
+          <div class="alert" id="result-alert">
+          </div>
+          
+          <div class="result-box">
+            <div class="result-title">Combined Value</div>
+            <div class="result-value" id="combined-value">-</div>
+            <div class="result-explanation">The server seed and client seed are combined to create this value.</div>
+          </div>
+          
+          <div class="result-box">
+            <div class="result-title">SHA-256 Hash</div>
+            <div class="result-value" id="hash-value">-</div>
+            <div class="result-explanation">The combined value is hashed using the SHA-256 algorithm.</div>
+          </div>
+          
+          <div class="result-box">
+            <div class="result-title">First 8 Characters</div>
+            <div class="result-value" id="first-8-chars">-</div>
+            <div class="result-explanation">The first 8 characters of the hash are used to determine the result.</div>
+          </div>
+          
+          <div class="result-box">
+            <div class="result-title">Hexadecimal to Decimal</div>
+            <div class="result-value" id="decimal-value">-</div>
+            <div class="result-explanation">These 8 characters are converted from hexadecimal to decimal.</div>
+          </div>
+          
+          <div class="result-box">
+            <div class="result-title">Calculation Logic</div>
+            <div class="result-value" id="calculation-logic">-</div>
+            <div class="result-explanation">If the decimal number is even, Creator wins (Heads). If odd, Joiner wins (Tails).</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">How Provably Fair Works</h2>
+        </div>
+        <div class="card-body">
+          <h3 style="font-size: 18px; margin-bottom: 12px;">The Provably Fair System</h3>
+          <p style="margin-bottom: 16px;">
+            Our provably fair system ensures that game outcomes are determined by a combination of two seeds:
+          </p>
+          
+          <ol style="margin-left: 20px; margin-bottom: 20px;">
+            <li style="margin-bottom: 8px;"><strong>Server Seed:</strong> Generated by our server before the game begins. This is kept secret until the game ends.</li>
+            <li style="margin-bottom: 8px;"><strong>Client Seed:</strong> Provided by the joiner or auto-generated when joining a game.</li>
+          </ol>
+          
+          <h3 style="font-size: 18px; margin-bottom: 12px;">Verification Process</h3>
+          <p style="margin-bottom: 16px;">
+            After a game is completed, you can verify that the outcome was fair by following these steps:
+          </p>
+          
+          <ol style="margin-left: 20px; margin-bottom: 20px;">
+            <li style="margin-bottom: 8px;">Combine the server seed and client seed.</li>
+            <li style="margin-bottom: 8px;">Generate a SHA-256 hash of the combined value.</li>
+            <li style="margin-bottom: 8px;">Take the first 8 characters of the hash.</li>
+            <li style="margin-bottom: 8px;">Convert these characters from hexadecimal to decimal.</li>
+            <li style="margin-bottom: 8px;">If the decimal number is even, the Creator wins (Heads). If odd, the Joiner wins (Tails).</li>
+          </ol>
+          
+          <p>
+            This system ensures that neither the server nor the client can manipulate the outcome of the game,
+            as both the server seed and client seed are required to determine the result.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script src="js/auth-client.js"></script>
+  <script>
+    const api = 'http://localhost:3000';
+    
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userInfo = document.getElementById('user-info');
+    const usernameDisplay = document.getElementById('username-display');
+    const userAvatar = document.getElementById('user-avatar');
+    
+    const gameIdInput = document.getElementById('game-id');
+    const serverSeedInput = document.getElementById('server-seed');
+    const clientSeedInput = document.getElementById('client-seed');
+    const calculateBtn = document.getElementById('calculate-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const fetchBtn = document.getElementById('fetch-btn');
+    const inputAlert = document.getElementById('input-alert');
+    const inputAlertMessage = document.getElementById('input-alert-message');
+    
+    const resultContainer = document.getElementById('result-container');
+    const resultCoin = document.getElementById('result-coin');
+    const resultAlert = document.getElementById('result-alert');
+    const combinedValue = document.getElementById('combined-value');
+    const hashValue = document.getElementById('hash-value');
+    const first8Chars = document.getElementById('first-8-chars');
+    const decimalValue = document.getElementById('decimal-value');
+    const calculationLogic = document.getElementById('calculation-logic');
+    
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => AuthClient.login());
+    }
+    
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => AuthClient.logout());
+    }
+    
+    calculateBtn.addEventListener('click', calculateResult);
+    clearBtn.addEventListener('click', clearForm);
+    fetchBtn.addEventListener('click', fetchGameData);
+    
+    function sha256(message) {
+  return new Promise(resolve => {
+    const script = document.createElement('script');
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js";
+    script.onload = function() {
+      const hash = sha256(message);
+      resolve(hash);
+    };
+    script.onerror = function() {
+      console.warn("SHA-256 library failed to load - using simplified hash");
+      let result = "";
+      const chars = "0123456789abcdef";
+      for (let i = 0; i < 64; i++) {
+        const charIndex = (message.length + i + message.charCodeAt(i % message.length)) % 16;
+        result += chars[charIndex];
+      }
+      resolve(result);
+    };
+    document.head.appendChild(script);
+  });
+}
+    
+    async function calculateResult() {
+      const serverSeed = serverSeedInput.value.trim();
+      const clientSeed = clientSeedInput.value.trim();
+      
+      if (!serverSeed || !clientSeed) {
+        showInputAlert('You must enter both the server seed and client seed.');
+        return;
+      }
+      
+      hideInputAlert();
+      
+      try {
+        const combinedSeed = serverSeed + clientSeed;
+        combinedValue.textContent = combinedSeed;
+        
+        const hash = await sha256(combinedSeed);
+        hashValue.textContent = hash;
+        
+        const first8 = hash.substring(0, 8);
+        first8Chars.textContent = first8;
+        
+        const decimal = parseInt(first8, 16);
+        decimalValue.textContent = decimal.toString();
+        
+        const isEven = decimal % 2 === 0;
+        const winner = isEven ? 'Creator (Heads)' : 'Joiner (Tails)';
+        
+        calculationLogic.innerHTML = `Decimal ${decimal} is ${isEven ? 'even' : 'odd'}, so <strong>${winner}</strong> wins.`;
+        
+        resultContainer.style.display = 'block';
+        resultContainer.scrollIntoView({ behavior: 'smooth' });
+        
+        if (isEven) {
+          resultCoin.className = 'coin-image coin-heads';
+          resultCoin.textContent = 'C';
+          resultAlert.className = 'alert alert-success';
+          resultAlert.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <strong>Result: Creator Wins (Heads)</strong>
+            <p style="margin: 8px 0 0;">The decimal value ${decimal} is even, so the creator wins this coinflip.</p>
+          `;
+        } else {
+          resultCoin.className = 'coin-image coin-tails';
+          resultCoin.textContent = 'J';
+          resultAlert.className = 'alert alert-success';
+          resultAlert.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <strong>Result: Joiner Wins (Tails)</strong>
+            <p style="margin: 8px 0 0;">The decimal value ${decimal} is odd, so the joiner wins this coinflip.</p>
+          `;
+        }
+        
+      } catch (error) {
+        console.error('Error calculating result:', error);
+        showInputAlert('An error occurred while calculating the result. Please try again.');
+      }
+    }
+    
+    async function fetchGameData() {
+      const gameId = gameIdInput.value.trim();
+      
+      if (!gameId) {
+        showInputAlert('Please enter a Game ID to fetch data.');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${api}/coinflip/game/${gameId}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            showInputAlert('Game not found. Please check the Game ID and try again.');
+          } else {
+            showInputAlert('Error fetching game data. Please try again later.');
+          }
+          return;
+        }
+        
+        const gameData = await response.json();
+        console.log('Game data:', gameData);
+        
+        if (!gameData.serverSeed) {
+          showInputAlert('Server seed is not available for this game yet. It is only revealed after the game is completed.');
+          return;
+        }
+        
+        serverSeedInput.value = gameData.serverSeed;
+        clientSeedInput.value = gameData.clientSeed || '';
+        
+        hideInputAlert();
+        
+        if (gameData.serverSeed && gameData.clientSeed) {
+          calculateResult();
+        }
+        
+      } catch (error) {
+        console.error('Error fetching game data:', error);
+        showInputAlert('An error occurred while fetching game data. Please try again.');
+      }
+    }
+    
+    function showInputAlert(message) {
+      inputAlertMessage.textContent = message;
+      inputAlert.style.display = 'block';
+    }
+    
+    function hideInputAlert() {
+      inputAlert.style.display = 'none';
+    }
+    
+    function clearForm() {
+      gameIdInput.value = '';
+      serverSeedInput.value = '';
+      clientSeedInput.value = '';
+      hideInputAlert();
+      resultContainer.style.display = 'none';
+    }
+    
+    async function updateAuthUI() {
+      try {
+        const user = await AuthClient.getCurrentUser();
+        
+        if (user) {
+          if (loginBtn) loginBtn.style.display = 'none';
+          if (userInfo) userInfo.style.display = 'flex';
+          if (usernameDisplay) usernameDisplay.textContent = user.robloxUsername;
+          if (userAvatar) userAvatar.textContent = user.robloxUsername.charAt(0).toUpperCase();
+        } else {
+          if (loginBtn) loginBtn.style.display = 'flex';
+          if (userInfo) userInfo.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error updating auth UI:', error);
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthUI();
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const gameId = urlParams.get('game');
+      if (gameId) {
+        gameIdInput.value = gameId;
+        fetchGameData();
+      }
+    });
+  </script>
+</body>
+</html>

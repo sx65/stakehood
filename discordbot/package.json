@@ -1,0 +1,25 @@
+{
+    "name": "testapp",
+    "version": "1.0.0",
+    "description": "testapp",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js",
+      "dev": "nodemon index.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "axios": "^1.6.2",
+      "discord.js": "^14.14.1",
+      "dotenv": "^16.3.1",
+      "sqlite3": "^5.1.6"
+    },
+    "devDependencies": {
+      "nodemon": "^3.0.1"
+    },
+    "engines": {
+      "node": ">=16.9.0"
+    }
+  }

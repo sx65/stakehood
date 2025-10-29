@@ -1,0 +1,246 @@
+:root {
+    --primary-color: #5865F2;
+    --secondary-color: #2f3136;
+    --accent-color: #7289da;
+    --background-color: #36393f;
+    --card-bg: #2f3136;
+    --card-header: #202225;
+    --text-color: #dcddde;
+    --text-muted: #8e9297;
+    --success-color: #57F287;
+    --warning-color: #FEE75C;
+    --error-color: #ED4245;
+    --dark-color: #18191c;
+    
+    --rarity-common: #95a5a6;
+    --rarity-uncommon: #2ecc71;
+    --rarity-rare: #3498db;
+    --rarity-epic: #9b59b6;
+    --rarity-legendary: #f1c40f;
+    --rarity-mythic: #e74c3c;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.navbar {
+    background-color: var(--dark-color);
+    box-shadow: 0 1px 0 rgba(4,4,5,0.2),0 1.5px 0 rgba(6,6,7,0.05),0 2px 0 rgba(4,4,5,0.05);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: var(--card-header);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-weight: 600;
+    padding: 12px 20px;
+}
+
+.btn-discord {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.btn-discord:hover, .btn-discord:focus {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.avatar-small {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.badge.rarity-common {
+    background-color: var(--rarity-common);
+    color: #212529;
+}
+
+.badge.rarity-uncommon {
+    background-color: var(--rarity-uncommon);
+}
+
+.badge.rarity-rare {
+    background-color: var(--rarity-rare);
+}
+
+.badge.rarity-epic {
+    background-color: var(--rarity-epic);
+}
+
+.badge.rarity-legendary {
+    background-color: var(--rarity-legendary);
+    color: #212529;
+}
+
+.badge.rarity-mythic {
+    background-color: var(--rarity-mythic);
+}
+
+.callback-page {
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.shake {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+.btn-refresh {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border-radius: 4px;
+    padding: 5px 8px;
+    transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+}
+
+.bot-commands {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.bot-commands li {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bot-commands li:last-child {
+    border-bottom: none;
+}
+
+.bot-commands code {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 2px 5px;
+    border-radius: 3px;
+    color: var(--text-color);
+}
+
+.stat-item {
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.footer {
+    background-color: var(--dark-color);
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.footer-heading {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.footer a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: inline-block;
+    padding: 3px 0;
+}
+
+.footer a:hover {
+    color: var(--text-color);
+}
+
+.form-control {
+    background-color: var(--dark-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.form-control:focus {
+    background-color: var(--dark-color);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.25rem rgba(88, 101, 242, 0.25);
+}
+
+.form-select {
+    background-color: var(--dark-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.form-select:focus {
+    background-color: var(--dark-color);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.25rem rgba(88, 101, 242, 0.25);
+}
